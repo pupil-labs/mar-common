@@ -4,7 +4,7 @@ description = "Marc's repo of commonly reused things!"
 authors = [{ name = "Pupil Labs GmbH", email = "info@pupil-labs.com" }]
 license = { text = "Proprietary" }
 readme = "README.md"
-requires-python = ">=3.10, <4.0"
+requires-python = ">=3.10, <=3.11"
 keywords = []
 dynamic = ["version"]
 classifiers = [
@@ -13,12 +13,14 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-dependencies = ["numpy"]
+dependencies = [
+    "numpy",
+    "pupil-labs-neon-usb>=0.0.1.post2",
+    "pupil-labs-realtime-api>=1.7.3",
+]
 
 [project.optional-dependencies]
 examples = [
