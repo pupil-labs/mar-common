@@ -23,7 +23,7 @@ class SourceWidget(QWidget):
         try:
             self.neon_usb_widget = NeonLocalWidget()
             self.tabs.addTab(self.neon_usb_widget, "Neon USB")
-        except ValueError:
+        except (ValueError, ModuleNotFoundError):
             pass
 
         self.neon_remote_widget = NeonRemoteWidget()

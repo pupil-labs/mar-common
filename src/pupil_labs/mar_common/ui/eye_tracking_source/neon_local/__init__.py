@@ -8,6 +8,10 @@ from .settings_widget import SettingsWidget
 class NeonLocalWidget(EyeTrackingSourceWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        # Assert NeonUSB is available
+        from pupil_labs.eye_tracking_sources.neon_usb import NeonUSB  # noqa: F401
+
         self.settings_widget = SettingsWidget()
         self.settings_controller = SettingsController(self.settings_widget)
         self.settings_controller.new_device_connected.connect(
