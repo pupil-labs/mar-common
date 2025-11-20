@@ -14,4 +14,3 @@ python_package_import_name: mar_common
 repository_name: mar-common
 repository_namespace: pupil-labs
 repository_provider: github.com
-

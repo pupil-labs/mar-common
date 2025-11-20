@@ -2,6 +2,7 @@
 
 Marc's repo of commonly reused things!
 """
+
 from __future__ import annotations
 
 import importlib.metadata

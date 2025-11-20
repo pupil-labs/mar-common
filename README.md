@@ -8,7 +8,6 @@
 [![pypi version](https://img.shields.io/pypi/v/pupil-labs-mar-common.svg)](https://pypi.org/project/pupil-labs-mar-common/)
 [![python version](https://img.shields.io/pypi/pyversions/pupil-labs-mar-common)](https://pypi.org/project/pupil-labs-mar-common/)
 
-
 Marc's repo of commonly reused things!
 
 ## Installation
