@@ -20,6 +20,9 @@ dependencies = [
     "numpy",
     "pupil-labs-neon-usb>=0.0.1.post2",
     "pupil-labs-realtime-api>=1.7.3",
+    "pyside6>=6.10.1",
+    "python-dotenv>=1.2.1",
+    "qimage2ndarray>=1.10.0",
 ]
 
 [project.optional-dependencies]

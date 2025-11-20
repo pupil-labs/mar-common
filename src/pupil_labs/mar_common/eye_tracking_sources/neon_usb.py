@@ -11,11 +11,20 @@ from . import (
 class NeonUSB(EyeTrackingSource):
     def __init__(self):
         super().__init__()
+        import os
+
+        from dotenv import load_dotenv
+
         from pupil_labs.neon_usb import EyeCamera, SceneCamera
 
-        neon_pipeline_module_name = "pupil_labs.gazenet"
-        neon_pipeline_class_name = "GazeRegressorSimple"
-        neon_pipeline_version = "2.8"
+        load_dotenv()
+
+        if "NEON_PIPELINE_MODULE_NAME" not in os.environ:
+            raise ValueError("Environment variable NEON_PIPELINE_MODULE_NAME not set.")
+
+        neon_pipeline_module_name = os.environ["NEON_PIPELINE_MODULE_NAME"]
+        neon_pipeline_class_name = os.environ["NEON_PIPELINE_CLASS_NAME"]
+        neon_pipeline_version = os.environ["NEON_PIPELINE_VERSION"]
         neon_pipeline_module = importlib.import_module(neon_pipeline_module_name)
         neon_pipeline_class = getattr(neon_pipeline_module, neon_pipeline_class_name)
 
@@ -51,7 +60,7 @@ class NeonUSB(EyeTrackingSource):
         ts = time.time()
         scene_frame = self._scene_cam.get_frame()
         eye_frame = self._eye_cam.get_frame()
-        gaze = self._pipeline(eye_frame)[0]
+        gaze = self._pipeline(eye_frame)
         data = EyeTrackingData(time=ts, gaze=gaze, scene=scene_frame.bgr)
         return data
 
