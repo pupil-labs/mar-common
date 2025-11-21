@@ -3,8 +3,8 @@ from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
 
 from .eye_tracking_source_widget import EyeTrackingSourceWidget
 from .hddigital import HDDigitalWidget
-from .neon_local import NeonLocalWidget
 from .neon_remote import NeonRemoteWidget
+from .neon_usb import NeonLocalWidget
 
 
 class SourceWidget(QWidget):
