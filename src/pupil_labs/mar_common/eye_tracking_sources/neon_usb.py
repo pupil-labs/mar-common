@@ -1,5 +1,8 @@
 import importlib
 import time
+from functools import cached_property
+
+import numpy as np
 
 from . import (
     CameraIntrinsics,
@@ -16,13 +19,6 @@ class NeonUSB(EyeTrackingSource):
         print("Connecting to scene cam...", end="", flush=True)
         self._scene_cam = SceneCamera()
         self._scene_cam.exposure = 120
-        print("Done.")
-
-        print("Loading scene intrinsics...", end="", flush=True)
-        intrinsics = self._scene_cam.get_intrinsics()
-        self._intrinsics = CameraIntrinsics(
-            intrinsics.camera_matrix, intrinsics.distortion_coefficients
-        )
         print("Done.")
 
         if compute_gaze:
@@ -52,27 +48,37 @@ class NeonUSB(EyeTrackingSource):
             print("Setting up pipeline...", end="", flush=True)
             self._pipeline = neon_pipeline_class(
                 pipeline_version=neon_pipeline_version,
-                camera_matrix=intrinsics.camera_matrix,
-                dist_coefs=intrinsics.distortion_coefficients,
+                camera_matrix=self.scene_intrinsics.camera_matrix,
+                dist_coefs=self.scene_intrinsics.distortion_coefficients,
             )
             print("Done.")
         else:
             self._eye_cam = None
             self._pipeline = None
 
-    @property
+    @cached_property
     def scene_intrinsics(self) -> CameraIntrinsics:
-        return self._intrinsics
+        intrinsics = self._scene_cam.get_intrinsics()
+        intrinsics = CameraIntrinsics(
+            intrinsics.camera_matrix, intrinsics.distortion_coefficients
+        )
+        return intrinsics
 
     def get_sample(self) -> EyeTrackingData:
-        ts = time.time()
+        ts = int(time.time() * 1e9)
         scene_frame = self._scene_cam.get_frame()
         if self._pipeline is None:
-            gaze = None
+            gaze = np.array([0, 0], dtype=np.float64)
         else:
             eye_frame = self._eye_cam.get_frame()
             gaze = self._pipeline(eye_frame)
-        data = EyeTrackingData(time=ts, gaze=gaze, scene=scene_frame.bgr)
+        data = EyeTrackingData(
+            time=ts,
+            gaze_scene_distorted=gaze,
+            scene_image_distorted=scene_frame.bgr,
+            camera_matrix=self.scene_intrinsics.camera_matrix,
+            distortion_coefficients=self.scene_intrinsics.distortion_coefficients,
+        )
         return data
 
     def close(self):

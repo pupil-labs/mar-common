@@ -1,3 +1,7 @@
+from functools import cached_property
+
+import numpy as np
+
 from pupil_labs.realtime_api.simple import Device
 
 from . import (
@@ -30,11 +34,6 @@ class NeonRemote(EyeTrackingSource):
             )
         print("  Success.")
         self._device = device
-        intrinsics = device.get_calibration()
-        self._scene_intrinsics = CameraIntrinsics(
-            intrinsics["scene_camera_matrix"],
-            intrinsics["scene_distortion_coefficients"],
-        )
 
     @property
     def address(self) -> str:
@@ -44,20 +43,32 @@ class NeonRemote(EyeTrackingSource):
     def port(self) -> int:
         return self._device.port
 
-    @property
+    @cached_property
     def scene_intrinsics(self) -> CameraIntrinsics:
-        return self._scene_intrinsics
+        intrinsics = self._device.get_calibration()
+        intrinsics = CameraIntrinsics(
+            intrinsics["scene_camera_matrix"],
+            intrinsics["scene_distortion_coefficients"],
+        )
+        return intrinsics
 
     def get_sample(self) -> EyeTrackingData:
         scene_and_gaze = self._device.receive_matched_scene_video_frame_and_gaze(
             timeout_seconds=1 / 5
         )
         if scene_and_gaze is None:
-            return EyeTrackingData(time=0, gaze=None, scene=None)
+            raise RuntimeError("No data received from Neon Remote device.")
 
         scene, gaze = scene_and_gaze
-        time = gaze.timestamp_unix_seconds
-        return EyeTrackingData(time, (gaze.x, gaze.y), scene.bgr_pixels)
+        gaze = np.array([gaze.x, gaze.y], dtype=np.float64)
+        time = scene.timestamp_unix_ns
+        return EyeTrackingData(
+            time=time,
+            gaze_scene_distorted=gaze,
+            scene_image_distorted=scene.bgr_pixels,
+            camera_matrix=self.scene_intrinsics.camera_matrix,
+            distortion_coefficients=self.scene_intrinsics.distortion_coefficients,
+        )
 
     def close(self):
         self._device.close()

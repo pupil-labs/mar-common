@@ -1,3 +1,4 @@
+from functools import cached_property
 from time import time
 
 import numpy as np
@@ -33,7 +34,7 @@ class HDDigital(EyeTrackingSource):
     def __init__(self):
         self._cam = HDDigitalCam()
 
-    @property
+    @cached_property
     def scene_intrinsics(
         self,
     ) -> CameraIntrinsics:
@@ -44,10 +45,16 @@ class HDDigital(EyeTrackingSource):
     def get_sample(self) -> EyeTrackingData:
         frame = self._cam.get_frame()
         img = frame.bgr
-        timestamp = time()
-        gaze = None
+        timestamp = int(time() * 1e9)  # convert to nanoseconds
+        gaze = np.array([0, 0], dtype=np.float64)
 
-        return EyeTrackingData(timestamp, gaze, img)
+        return EyeTrackingData(
+            time=timestamp,
+            gaze_scene_distorted=gaze,
+            scene_image_distorted=img,
+            camera_matrix=self.scene_intrinsics.camera_matrix,
+            distortion_coefficients=self.scene_intrinsics.distortion_coefficients,
+        )
 
     def close(self):
         self._cam.close()
