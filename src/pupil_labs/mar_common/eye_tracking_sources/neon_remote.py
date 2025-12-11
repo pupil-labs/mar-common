@@ -2,10 +2,10 @@ from functools import cached_property
 
 import numpy as np
 
+from pupil_labs.camera import CameraRadial
 from pupil_labs.realtime_api.simple import Device
 
 from . import (
-    CameraIntrinsics,
     EyeTrackingData,
     EyeTrackingSource,
 )
@@ -44,13 +44,14 @@ class NeonRemote(EyeTrackingSource):
         return self._device.port
 
     @cached_property
-    def scene_intrinsics(self) -> CameraIntrinsics:
+    def scene_intrinsics(self) -> CameraRadial:
         intrinsics = self._device.get_calibration()
-        intrinsics = CameraIntrinsics(
-            intrinsics["scene_camera_matrix"],
-            intrinsics["scene_distortion_coefficients"],
+        return CameraRadial(
+            pixel_width=1600,
+            pixel_height=1200,
+            camera_matrix=intrinsics.camera_matrix,
+            distortion_coefficients=intrinsics.distortion_coefficients,
         )
-        return intrinsics
 
     def get_sample(self) -> EyeTrackingData:
         scene_and_gaze = self._device.receive_matched_scene_video_frame_and_gaze(
@@ -66,8 +67,8 @@ class NeonRemote(EyeTrackingSource):
             time=time,
             gaze_scene_distorted=gaze,
             scene_image_distorted=scene.bgr_pixels,
-            camera_matrix=self.scene_intrinsics.camera_matrix,
-            distortion_coefficients=self.scene_intrinsics.distortion_coefficients,
+            intrinsics=self.scene_intrinsics,
+            eye_image=None,
         )
 
     def close(self):

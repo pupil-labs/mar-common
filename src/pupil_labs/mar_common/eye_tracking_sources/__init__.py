@@ -1,3 +1,3 @@
-from .eye_tracking_source import CameraIntrinsics, EyeTrackingData, EyeTrackingSource
+from .eye_tracking_source import EyeTrackingData, EyeTrackingSource
 
-__all__ = ["CameraIntrinsics", "EyeTrackingData", "EyeTrackingSource"]
+__all__ = ["EyeTrackingData", "EyeTrackingSource"]

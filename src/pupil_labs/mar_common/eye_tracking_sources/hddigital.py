@@ -3,11 +3,11 @@ from time import time
 
 import numpy as np
 
+from pupil_labs.camera import CameraRadial
 from pupil_labs.neon_usb.cameras.backend import UVCBackend
 from pupil_labs.neon_usb.cameras.camera import CameraSpec
 
 from . import (
-    CameraIntrinsics,
     EyeTrackingData,
     EyeTrackingSource,
 )
@@ -37,10 +37,15 @@ class HDDigital(EyeTrackingSource):
     @cached_property
     def scene_intrinsics(
         self,
-    ) -> CameraIntrinsics:
+    ) -> CameraRadial:
         camera_matrix = np.load("resources/camera_matrix.npy")
         dist_coeffs = np.load("resources/dist_coeffs.npy")
-        return CameraIntrinsics(camera_matrix, dist_coeffs)
+        return CameraRadial(
+            pixel_width=640,
+            pixel_height=480,
+            camera_matrix=camera_matrix,
+            distortion_coefficients=dist_coeffs,
+        )
 
     def get_sample(self) -> EyeTrackingData:
         frame = self._cam.get_frame()
@@ -52,8 +57,8 @@ class HDDigital(EyeTrackingSource):
             time=timestamp,
             gaze_scene_distorted=gaze,
             scene_image_distorted=img,
-            camera_matrix=self.scene_intrinsics.camera_matrix,
-            distortion_coefficients=self.scene_intrinsics.distortion_coefficients,
+            intrinsics=self.scene_intrinsics,
+            eye_image=None,
         )
 
     def close(self):

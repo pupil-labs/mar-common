@@ -1332,10 +1332,20 @@ wheels = [
 ]
 
 [[package]]
+name = "pupil-labs-camera"
+version = "0.0.0.post118.dev0+66db192"
+source = { git = "https://github.com/pupil-labs/pl-camera.git#66db192362222c6a72075f4b41d78b334ef2bc7e" }
+dependencies = [
+    { name = "numpy" },
+    { name = "opencv-python" },
+]
+
+[[package]]
 name = "pupil-labs-mar-common"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },
+    { name = "pupil-labs-camera" },
     { name = "pupil-labs-neon-usb" },
     { name = "pupil-labs-realtime-api" },
     { name = "pyside6" },
@@ -1369,6 +1379,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "numpy" },
+    { name = "pupil-labs-camera", git = "https://github.com/pupil-labs/pl-camera.git" },
     { name = "pupil-labs-neon-usb", specifier = ">=0.0.1.post2" },
     { name = "pupil-labs-realtime-api", specifier = ">=1.7.3" },
     { name = "pyside6", specifier = ">=6.10.1" },

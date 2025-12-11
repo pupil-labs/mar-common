@@ -18,6 +18,7 @@ classifiers = [
 
 dependencies = [
     "numpy",
+    "pupil-labs-camera",
     "pupil-labs-neon-usb>=0.0.1.post2",
     "pupil-labs-realtime-api>=1.7.3",
     "pyside6>=6.10.1",
@@ -92,3 +93,6 @@ source = "uv-dynamic-versioning"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pupil_labs"]
+
+[tool.uv.sources]
+pupil-labs-camera = { git = "https://github.com/pupil-labs/pl-camera.git" }
