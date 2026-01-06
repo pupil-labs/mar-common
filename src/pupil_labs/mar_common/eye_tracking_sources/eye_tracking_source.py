@@ -5,7 +5,7 @@ from functools import cached_property
 import numpy as np
 import numpy.typing as npt
 
-from pupil_labs.camera import CameraRadial
+from pupil_labs.camera import Camera
 
 
 @dataclass
@@ -19,7 +19,7 @@ class EyeTrackingData:
     gaze_scene_distorted: npt.NDArray[np.float64]
     """Gaze point in distorted scene image coordinates"""
 
-    intrinsics: CameraRadial
+    intrinsics: Camera
     """Intrinsics of the scene camera."""
 
     eye_image: npt.NDArray[np.uint8]
@@ -39,7 +39,7 @@ class EyeTrackingData:
 class EyeTrackingSource(ABC):
     @cached_property
     @abstractmethod
-    def scene_intrinsics(self) -> CameraRadial:
+    def scene_intrinsics(self) -> Camera:
         pass
 
     @abstractmethod

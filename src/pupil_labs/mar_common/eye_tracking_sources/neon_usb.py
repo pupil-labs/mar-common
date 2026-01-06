@@ -6,7 +6,7 @@ from threading import Event, Thread
 
 import numpy as np
 
-from pupil_labs.camera import CameraRadial
+from pupil_labs.camera import Camera
 from pupil_labs.neon_usb import (
     EyeCamera,
     Frame,
@@ -35,7 +35,7 @@ def get_all_items(q: queue.Queue[Frame]) -> list[Frame]:
 
 def image_receiver(
     CameraClass: type[SceneCamera | EyeCamera],
-    intrinsics_q: queue.Queue[CameraRadial] | None,
+    intrinsics_q: queue.Queue[Camera] | None,
     output_q: queue.Queue[Frame],
     start_event: Event,
     stop_event: Event,
@@ -79,7 +79,7 @@ class NeonUSB(EyeTrackingSource):
         print("Connecting to scene cam...", end="", flush=True)
         scene_start_event = Event()
         self.scene_stop_event = Event()
-        scene_intrinsics_q = queue.Queue[CameraRadial](maxsize=1)
+        scene_intrinsics_q = queue.Queue[Camera](maxsize=1)
         self.scene_q = queue.Queue[Frame](maxsize=10)
         scene_thread = Thread(
             target=image_receiver,
@@ -94,7 +94,7 @@ class NeonUSB(EyeTrackingSource):
         )
         scene_thread.start()
         intrinsics = scene_intrinsics_q.get()
-        self.scene_intrinsics = CameraRadial(
+        self.scene_intrinsics = Camera(
             1600, 1200, intrinsics.camera_matrix, intrinsics.distortion_coefficients
         )
         scene_start_event.wait()

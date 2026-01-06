@@ -21,6 +21,7 @@ dependencies = [
     "pupil-labs-camera",
     "pupil-labs-neon-usb>=0.0.1.post2",
     "pupil-labs-realtime-api>=1.7.3",
+    "pupil-labs-video>=1.0.6",
     "pyside6>=6.10.1",
     "python-dotenv>=1.2.1",
     "qimage2ndarray>=1.10.0",
@@ -93,6 +94,3 @@ source = "uv-dynamic-versioning"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pupil_labs"]
-
-[tool.uv.sources]
-pupil-labs-camera = { git = "https://github.com/pupil-labs/pl-camera.git" }
