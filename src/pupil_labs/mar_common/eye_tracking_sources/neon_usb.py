@@ -67,12 +67,11 @@ class NeonUSB(EyeTrackingSource):
         super().__init__()
 
         self._init_scene_camera()
+        self._init_eye_camera()
 
         if compute_gaze:
-            self._init_eye_camera()
             self._pipeline = self._init_pipeline()
         else:
-            self._eye_cam = None
             self._pipeline = None
 
     def _init_scene_camera(self):
